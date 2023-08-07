@@ -37,8 +37,9 @@ class RoundSliderTrackShape extends SliderTrackShape {
         required SliderThemeData sliderTheme,
         required Animation<double> enableAnimation,
         required Offset thumbCenter,
-        bool? isEnabled,
-        bool? isDiscrete,
+        Offset? secondaryOffset,
+        bool isEnabled = false,
+        bool isDiscrete = false,
         required TextDirection textDirection,
       }) {
     if (sliderTheme.trackHeight == 0) {

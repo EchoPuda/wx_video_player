@@ -53,16 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> initializePlayer() async {
-    _videoPlayerController = VideoPlayerController.network(videoUrl);
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
     await _videoPlayerController.initialize();
-    // 初始化完成，刷新，初始化完成才能显示VideoPlayer
-    if (mounted) {
-      setState(() {});
-    }
     // 设置循环
     _videoPlayerController.setLooping(true);
     // 播放
     await _videoPlayerController.play();
+
+    // 初始化完成，刷新，初始化完成才能显示VideoPlayer
+    // if (mounted) {
+    //   setState(() {});
+    // }
   }
 
   void onTap() {
@@ -89,24 +90,32 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Hero(
         tag: 'video_page_player',
-        placeholderBuilder: (
-            BuildContext context,
-            Size heroSize,
-            Widget child,
-            ) {
-          return child;
-        },
-        child: GestureDetector(
-          onTap: onTap,
-          child: SizedBox(
-            width: 200,
-            child: _videoPlayerController.value.isInitialized ? AspectRatio(
-              aspectRatio:
-              _videoPlayerController.value.aspectRatio,
-              child: VideoPlayer(_videoPlayerController),
-            )
-                : const SizedBox(),
-          ),
+        child: Stack(
+          children: [
+            SizedBox(
+              width: 200,
+              child: AspectRatio(
+                aspectRatio:
+                _videoPlayerController.value.aspectRatio,
+                child: VideoPlayer(
+                  _videoPlayerController,
+                ),
+              ),
+            ),
+
+            Positioned.fill(
+              child: GestureDetector( // VideoPlayer 捕获了点击事件，并且优先级较高，所以盖在上面才能拿到点击事件
+                onTap: () {
+                  onTap();
+                },
+                child: Container(
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
